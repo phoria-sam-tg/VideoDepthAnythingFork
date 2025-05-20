@@ -1,0 +1,11 @@
+[project]
+name = "video_depth_anything"
+version = "0.1.0"
+dependencies = []
+
+[tool.setuptools]
+packages = ["video_depth_anything"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
