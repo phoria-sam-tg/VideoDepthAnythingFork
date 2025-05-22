@@ -6,5 +6,5 @@ __pycache__
 *.pyc
 gradio*
 .venv
-.egg*
+*.egg*
 .egg-info

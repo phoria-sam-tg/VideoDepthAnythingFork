@@ -200,7 +200,7 @@ class DinoVisionTransformer(nn.Module):
             patch_pos_embed.reshape(1, int(sqrt_N), int(sqrt_N), dim).permute(0, 3, 1, 2),
             scale_factor=(sx, sy),
             # (int(w0), int(h0)), # to solve the upsampling shape issue
-            mode="bicubic",
+            mode="nearest",
             antialias=self.interpolate_antialias
         )
         
@@ -361,6 +361,7 @@ def vit_base(patch_size=16, num_register_tokens=0, **kwargs):
         num_register_tokens=num_register_tokens,
         **kwargs,
     )
+    model = model.to(torch.device('mps'))
     return model
 
 
