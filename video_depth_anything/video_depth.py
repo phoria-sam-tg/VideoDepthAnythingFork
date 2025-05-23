@@ -19,7 +19,7 @@ import cv2
 from tqdm import tqdm
 import numpy as np
 import gc
-
+from platform import system
 from .dinov2 import DINOv2
 from .dpt_temporal import DPTHeadTemporal
 from .util.transform import Resize, NormalizeImage, PrepareForNet
@@ -102,8 +102,9 @@ class VideoDepthAnything(nn.Module):
                 cur_input[:, :OVERLAP, ...] = pre_input[:, KEYFRAMES, ...]
 
             with torch.no_grad():
-                # with torch.autocast(device_type=device, enabled=(not fp32)):
-                    depth = self.forward(cur_input) # depth shape: [1, T, H, W]
+                if system == "Windows" or "Linux":
+                    with torch.autocast(device_type=device, enabled=(not fp32)):
+                        depth = self.forward(cur_input) # depth shape: [1, T, H, W]
 
             depth = depth.to(cur_input.dtype)
             depth = F.interpolate(depth.flatten(0,1).unsqueeze(1), size=(frame_height, frame_width), mode='bilinear', align_corners=True)

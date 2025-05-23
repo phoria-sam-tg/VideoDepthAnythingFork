@@ -18,7 +18,7 @@ import torch.utils.checkpoint
 from torch.nn.init import trunc_normal_
 
 from .dinov2_layers import Mlp, PatchEmbed, SwiGLUFFNFused, MemEffAttention, NestedTensorBlock as Block
-
+from platform import system
 
 logger = logging.getLogger("dinov2")
 
@@ -196,11 +196,15 @@ class DinoVisionTransformer(nn.Module):
         
         sqrt_N = math.sqrt(N)
         sx, sy = float(w0) / sqrt_N, float(h0) / sqrt_N
+        if system == "Windows" or "Linux":
+            mode = "bilinear"
+        else:
+            mode = "nearest"
         patch_pos_embed = nn.functional.interpolate(
             patch_pos_embed.reshape(1, int(sqrt_N), int(sqrt_N), dim).permute(0, 3, 1, 2),
             scale_factor=(sx, sy),
             # (int(w0), int(h0)), # to solve the upsampling shape issue
-            mode="nearest",
+            mode= mode,
             antialias=self.interpolate_antialias
         )
         
